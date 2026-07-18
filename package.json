@@ -1,0 +1,13 @@
+{
+  "name": "decode-the-tech-blockchain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Decode the Tech: Blockchain — interactive browser presentation (reveal.js)",
+  "scripts": {
+    "start": "node serve.js",
+    "build": "mkdir -p public && cp -r index.html css js vendor public/ && cp package.json public/ 2>/dev/null || true"
+  },
+  "devDependencies": {
+    "reveal.js": "^5.2.1"
+  }
+}

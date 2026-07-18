@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\('vm'\\).runInNewContext\\(require\\('fs'\\).readFileSync\\('js/demo-sign.js','utf8'\\), {document:{getElementById:\\(\\)=>null}, window:{}}\\)\")"
+    ]
+  }
+}

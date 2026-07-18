@@ -1,0 +1,611 @@
+/* =====================================================================
+   Decode the Tech — Blockchain
+   theme.css  ·  "Decode the Tech" dark, engineered, terminal-adjacent theme
+   ---------------------------------------------------------------------
+   This is a SELF-CONTAINED reveal.js theme. index.html loads:
+       vendor/revealjs/dist/reset.css   (normalize)
+       vendor/revealjs/dist/reveal.css  (core layout — required)
+       css/theme.css                    (this file — all colors + type)
+   No reveal base theme (black.css etc.) is loaded, so nothing here has to
+   fight another theme's specificity, and no external theme fonts are pulled.
+
+   REBRAND HERE ▼  — every color / font is a token in the :root block below.
+   Drop in a "Decode the Tech" brand kit later by editing only these values.
+   ===================================================================== */
+
+:root {
+  /* ---- Palette (from build-brief §3) ---------------------------------- */
+  --bg:      #0B0E14;   /* near-black navy — deck background            */
+  --surface: #121722;   /* raised panels, cards, code blocks            */
+  --text:    #E6EAF2;   /* primary foreground                          */
+  --muted:   #8A93A6;   /* secondary / captions / de-emphasized        */
+  --accent:  #35E0C1;   /* electric teal — the "decoded" signal (sparingly) */
+  --danger:  #FF5C7A;   /* tamper / broken-chain red                   */
+  --ok:      #3DDC84;   /* valid / green                               */
+
+  /* ---- Derived tints (kept as tokens so rebrand stays one-stop) ------- */
+  --border:        rgba(230, 234, 242, 0.10);  /* thin hairline rules   */
+  --accent-soft:   rgba(53, 224, 193, 0.14);   /* accent wash / hovers  */
+  --dot:           rgba(138, 147, 166, 0.06);  /* background dot-grid    */
+
+  /* ---- Typography ----------------------------------------------------- */
+  /* System stacks by default → guaranteed offline (no font fetch at the
+     venue). Swap --font-sans to "'Inter', system-ui, …" and bundle the
+     woff2 under vendor/fonts/ if a specific typeface is wanted later.    */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---- Spacing / sizing ---------------------------------------------- */
+  --slide-pad: 4vmin;   /* breathing room around slide content           */
+  --rule: 3px;          /* thickness of the thin accent rule             */
+}
+
+/* =====================================================================
+   Base
+   ===================================================================== */
+html { background: var(--bg); }
+
+.reveal-viewport {
+  background-color: var(--bg);
+  /* On-theme motif: a faint LINKED-BLOCKS lattice — small blocks joined by
+     connectors, i.e. a literal (very subtle) blockchain — layered under a soft
+     top glow for depth. Opacity is deliberately tiny so projector text stays
+     crisp. Swap/remove via this one rule if the brand kit lands later. */
+  background-image:
+    radial-gradient(120% 80% at 50% -10%, rgba(53, 224, 193, 0.06), transparent 60%),
+    url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='90'%20height='90'%20viewBox='0%200%2090%2090'%3E%3Cg%20fill='none'%20stroke='%238A93A6'%20stroke-opacity='0.05'%20stroke-width='1.1'%3E%3Crect%20x='33'%20y='33'%20width='24'%20height='24'%20rx='4'/%3E%3Cpath%20d='M0%2045%20H33%20M57%2045%20H90%20M45%200%20V33%20M45%2057%20V90'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 100%, 90px 90px;
+}
+
+.reveal {
+  font-family: var(--font-sans);
+  font-size: 40px;               /* reveal scales this to the 1080p canvas */
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: 0.2px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.reveal .slides { text-align: left; }
+.reveal .slides > section,
+.reveal .slides > section > section {
+  padding: var(--slide-pad);
+  line-height: 1.4;
+}
+
+/* =====================================================================
+   Headings
+   ===================================================================== */
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  font-family: var(--font-sans);
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin: 0 0 0.5em;
+  text-transform: none;
+  text-shadow: none;
+}
+.reveal h1 { font-size: 2.1em; }
+.reveal h2 { font-size: 1.5em; }
+.reveal h3 { font-size: 1.15em; color: var(--muted); font-weight: 600; }
+
+/* Thin accent rule under the lead heading of a slide. */
+.reveal h1::after,
+.reveal h2.lead::after {
+  content: "";
+  display: block;
+  width: 2.2em;
+  height: var(--rule);
+  margin-top: 0.4em;
+  background: var(--accent);
+  border-radius: var(--rule);
+}
+
+/* The accent is the "decoded" signal — use it sparingly, on purpose. */
+.reveal .accent { color: var(--accent); }
+.reveal .muted  { color: var(--muted);  }
+.reveal .ok     { color: var(--ok);     }
+.reveal .danger { color: var(--danger); }
+
+/* =====================================================================
+   Body copy, links, lists
+   ===================================================================== */
+.reveal p { margin: 0 0 0.6em; }
+.reveal a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-soft);
+}
+.reveal a:hover { border-bottom-color: var(--accent); }
+
+.reveal ul,
+.reveal ol { display: block; margin: 0 0 0 1em; }
+.reveal li { margin: 0.35em 0; }
+.reveal ::marker { color: var(--accent); }
+
+.reveal strong { color: #fff; font-weight: 700; }
+.reveal em { color: var(--text); font-style: italic; }
+
+/* Eyebrow / series lockup ("Decode the Tech") */
+.reveal .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.5em;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6em;
+}
+
+/* =====================================================================
+   Monospace: hashes, code, char-codes, ledger entries
+   Hashes MUST be monospace so columns align and "avalanche" is obvious.
+   ===================================================================== */
+.reveal code,
+.reveal pre,
+.reveal kbd,
+.reveal .mono,
+.reveal .hash {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
+
+.reveal code {
+  background: var(--surface);
+  color: var(--accent);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.reveal pre {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1em 1.2em;
+  font-size: 0.7em;
+  line-height: 1.45;
+  box-shadow: none;
+  width: auto;
+}
+.reveal pre code { background: none; color: var(--text); padding: 0; }
+
+/* A hash chip — big, monospace, accent-colored fingerprint output. */
+.reveal .hash {
+  display: inline-block;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.25em 0.5em;
+  letter-spacing: 1px;
+  word-break: break-all;
+}
+
+/* Keyboard hint chips, e.g. press S / F / ESC */
+.reveal kbd {
+  display: inline-block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 0.05em 0.45em;
+  color: var(--text);
+  font-size: 0.85em;
+}
+
+/* Simple surface card, reused later by the demos. */
+.reveal .card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1em 1.2em;
+}
+
+/* =====================================================================
+   reveal chrome — controls, progress bar, slide number
+   ===================================================================== */
+.reveal .controls { color: var(--accent); }
+.reveal .progress {
+  color: var(--accent);               /* the filled portion */
+  height: 4px;
+  background: rgba(230, 234, 242, 0.08);
+}
+.reveal .slide-number {
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 16px;
+}
+
+/* Link color inside the print / overview */
+.reveal .backgrounds { background: var(--bg); }
+
+/* =====================================================================
+   Fragments — keep the default reveal fragment behavior, just ensure
+   hidden fragments never bleed color.
+   ===================================================================== */
+.reveal .fragment.highlight-accent.visible { color: var(--accent); }
+
+/* =====================================================================
+   Motion — the scramble→settle "decode" animation lands in step 3.
+   This just establishes the reduced-motion hook now so it's respected
+   from the start.
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .reveal .slides section .fragment { transition: none !important; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* =====================================================================
+   SLIDE COMPONENTS (§5 content)
+   Small reusable pieces so every slide reads as one system. The two
+   interactive demos mount into .demo-mount placeholders in steps 3 & 4.
+   ===================================================================== */
+
+/* Act label — a small eyebrow that reinforces the brief's 3-act structure. */
+.reveal .act {
+  font-family: var(--font-mono);
+  font-size: 0.42em;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5em;
+}
+.reveal .act b { color: var(--accent); font-weight: 700; }
+
+/* Lead-in kicker under a heading. */
+.reveal .kicker { color: var(--muted); font-size: 0.7em; margin-top: -0.2em; }
+
+/* A "chain of blocks" divider — three linked blocks, on-theme. */
+.reveal .chain-rule {
+  display: flex; align-items: center; gap: 0; margin: 0.6em 0;
+}
+.reveal .chain-rule i {
+  width: 14px; height: 14px; border: 2px solid var(--accent);
+  border-radius: 3px; display: inline-block; opacity: 0.9;
+}
+.reveal .chain-rule span { width: 22px; height: 2px; background: var(--accent); opacity: 0.5; }
+
+/* ---- Ledger table (slide 4) ---------------------------------------- */
+.reveal table.ledger {
+  border-collapse: collapse; font-family: var(--font-mono);
+  font-size: 0.62em; margin: 0.4em 0; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+}
+.reveal table.ledger th,
+.reveal table.ledger td {
+  padding: 0.5em 0.9em; text-align: left; border-bottom: 1px solid var(--border);
+}
+.reveal table.ledger th { color: var(--accent); font-weight: 700; letter-spacing: 1px; }
+.reveal table.ledger tr:last-child td { border-bottom: none; }
+.reveal table.ledger td { color: var(--text); }
+
+/* ---- Actor flow: Alice -> Bank -> Bob (slide 5), nodes (slide 6) ---- */
+.reveal .flow { display: flex; align-items: center; gap: 0.7em; flex-wrap: wrap; }
+.reveal .flow .node {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 0.5em 0.9em; text-align: center; min-width: 2.2em;
+}
+.reveal .flow .node .big { font-size: 1.6em; display: block; line-height: 1; }
+.reveal .flow .node .lbl { font-size: 0.55em; color: var(--muted); margin-top: 0.2em; }
+.reveal .flow .arrow { color: var(--accent); font-size: 1.2em; }
+.reveal .flow .node.mid { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-soft); }
+
+/* Mesh of peer nodes (slide 6, 13). */
+.reveal .mesh { display: flex; gap: 0.5em; flex-wrap: wrap; max-width: 12em; }
+.reveal .mesh .peer {
+  width: 2.1em; height: 2.1em; border-radius: 8px; background: var(--surface);
+  border: 1px solid var(--border); display: grid; place-items: center;
+  font-size: 0.7em; color: var(--muted);
+}
+.reveal .mesh .peer.own { border-color: var(--accent); color: var(--accent); }
+
+/* ---- Hash properties (slide 9) ------------------------------------- */
+.reveal .props { display: flex; gap: 0.7em; flex-wrap: wrap; }
+.reveal .props .prop {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent); border-radius: 10px;
+  padding: 0.6em 0.9em; flex: 1 1 6em;
+}
+.reveal .props .prop b { color: var(--text); display: block; margin-bottom: 0.15em; }
+.reveal .props .prop small { color: var(--muted); font-size: 0.7em; }
+
+/* ---- Block-chain diagram (slide 7, 11) ----------------------------- */
+.reveal .blocks { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+.reveal .blocks .blk {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.55em 0.7em; min-width: 6.3em;
+  font-family: var(--font-mono); font-size: 0.52em;
+}
+.reveal .blocks .blk .idx { color: var(--accent); font-weight: 700; letter-spacing: 1px; }
+.reveal .blocks .blk .row { color: var(--muted); margin-top: 0.25em; white-space: nowrap; }
+.reveal .blocks .blk .row b { color: var(--text); font-weight: 400; }
+.reveal .blocks .weld { align-self: center; color: var(--accent); padding: 0 0.35em; font-size: 0.8em; }
+
+/* Transaction detail inside a block (slide 7 — a block is a *batch* of txs). */
+.reveal .blocks .blk.detail { min-width: 9.4em; }
+.reveal .blocks .blk .bhead { display: flex; justify-content: space-between; align-items: baseline; }
+.reveal .blocks .blk .bhead .cnt { color: var(--muted); font-size: 0.82em; letter-spacing: 0; }
+.reveal .blocks .blk .tx {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 0.55em;
+  margin-top: 0.32em; color: var(--muted); white-space: nowrap; align-items: baseline;
+}
+.reveal .blocks .blk .tx .id  { color: var(--accent); }
+.reveal .blocks .blk .tx .who { color: var(--text); }
+.reveal .blocks .blk .tx .amt { color: var(--text); text-align: right; }
+.reveal .blocks .blk .tx .amt::before { content: "⛁ "; color: var(--muted); }
+
+/* ---- Two-column compare (slides 16, 18) ---------------------------- */
+.reveal .compare { display: flex; gap: 1em; }
+.reveal .compare .col {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 0.8em 1em;
+}
+.reveal .compare .col h4 { color: var(--accent); margin: 0 0 0.4em; font-size: 0.8em; }
+.reveal .compare .col.plain h4 { color: var(--muted); }
+.reveal .compare .col ul { font-size: 0.62em; margin-left: 0.8em; }
+
+/* ---- Chips / pill lists (slides 2, 15) ----------------------------- */
+.reveal .chips { display: flex; gap: 0.5em; flex-wrap: wrap; }
+.reveal .chips .chip {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 999px; padding: 0.35em 0.9em; font-size: 0.7em; color: var(--text);
+}
+
+/* ---- Big statement slides (14, 18, 19) ----------------------------- */
+.reveal .statement { font-size: 1.4em; font-weight: 700; line-height: 1.2; }
+.reveal .statement .accent { display: inline; }
+
+/* ---- Satoshi paper card (slide 3) ---------------------------------- */
+.reveal .paper {
+  background: #f4f1e8; color: #1a1a1a; border-radius: 4px;
+  padding: 1.1em 1.3em; width: 12em; box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+  font-family: "Times New Roman", Georgia, serif; transform: rotate(-1.2deg);
+}
+.reveal .paper .ptitle { font-size: 0.62em; font-weight: 700; line-height: 1.25; }
+.reveal .paper .pauth  { font-size: 0.42em; margin: 0.5em 0; }
+.reveal .paper .pabs   { font-size: 0.36em; color: #333; line-height: 1.35; text-align: justify; }
+.reveal .paper .pabs b { font-style: italic; }
+
+/* ---- Interactive demo mount (slides 10, 12) ------------------------ */
+.reveal .demo-mount {
+  background: var(--surface);
+  border: 1px dashed var(--accent-soft);
+  border-radius: 12px; padding: 1.2em; margin-top: 0.4em;
+  min-height: 3em; display: grid; place-items: center; text-align: center;
+}
+.reveal .demo-mount .tag {
+  font-family: var(--font-mono); font-size: 0.55em; color: var(--muted);
+}
+.reveal .demo-mount .tag b { color: var(--accent); }
+
+/* Two-up layout helper (text beside a visual). */
+.reveal .split { display: flex; gap: 1.2em; align-items: center; }
+.reveal .split > .half { flex: 1; }
+
+/* PoW illustration (slide 13). */
+.reveal .pow {
+  font-family: var(--font-mono); font-size: 0.6em; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; padding: 0.6em 0.9em;
+}
+.reveal .pow .zeros { color: var(--ok); }
+.reveal .pow .rest  { color: var(--muted); }
+
+/* =====================================================================
+   DEMO 1 — Hashing (js/demo-hash.js), mounts into #demo-hash (slide 10)
+   ===================================================================== */
+.reveal .demo-mount.mounted {
+  display: block; text-align: left; border-style: solid;
+  border-color: var(--border); padding: 0.9em 1.1em; min-height: 0;
+}
+.reveal .dh { font-size: 0.62em; line-height: 1.35; }
+
+/* Top control bar: input + change-a-letter + stage toggle */
+.reveal .dh-top { display: flex; align-items: center; gap: 0.55em; flex-wrap: wrap; }
+.reveal .dh-top label { color: var(--muted); font-family: var(--font-mono); font-size: 0.8em; }
+.reveal .dh-input {
+  flex: 1 1 12em; min-width: 8em; font-family: var(--font-mono); font-size: 1em;
+  background: var(--bg); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.5em 0.7em; outline: none;
+}
+.reveal .dh-input:focus { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-soft); }
+.reveal .dh-btn {
+  font-family: var(--font-mono); font-size: 0.82em; cursor: pointer;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.45em 0.75em; transition: border-color .15s, color .15s;
+}
+.reveal .dh-btn:hover { border-color: var(--accent); color: var(--accent); }
+.reveal .dh-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.reveal .dh-toggle button {
+  font-family: var(--font-mono); font-size: 0.8em; cursor: pointer; background: transparent;
+  color: var(--muted); border: none; padding: 0.5em 0.8em; transition: background .15s, color .15s;
+}
+.reveal .dh-toggle button.active { background: var(--accent-soft); color: var(--accent); }
+
+/* Avalanche callout — flashes when the input changes */
+.reveal .dh-callout {
+  color: var(--accent); font-size: 0.78em; height: 1.2em; opacity: 0;
+  transition: opacity .2s; font-family: var(--font-mono); margin: 0.35em 0 0.1em;
+}
+.reveal .dh-callout.flash { opacity: 1; }
+
+/* Stage A — positional letter-sum hash, colorful step-by-step reveal.
+   Two hues carry the two position groups: odd = teal, even = amber; the
+   odd digits that survive to the output glow green. */
+.reveal .dh { --mh-odd: var(--accent); --mh-even: #F5B14C; --mh-out: var(--ok); }
+/* Un-revealed steps are fully hidden (not dimmed); they appear one at a time. */
+.reveal .mh-step { display: none; margin: 0.4em 0; }
+.reveal .mh-step.show { display: block; }
+.reveal .mh-h { font-family: var(--font-mono); font-size: 0.72em; color: var(--text); margin-bottom: 0.3em; }
+.reveal .mh-hint { color: var(--muted); }
+
+/* 1 · letters → numbers, tinted by position parity */
+.reveal .mh-letters { display: flex; gap: 0.42em; flex-wrap: wrap; }
+.reveal .mh-let {
+  position: relative; text-align: center; font-family: var(--font-mono);
+  border: 1px solid var(--border); border-radius: 8px; padding: 0.3em 0.45em; min-width: 2em;
+  background: var(--surface);
+  opacity: 0; transform: translateY(7px); transition: opacity .28s ease, transform .28s ease;
+}
+.reveal .mh-let.show { opacity: 1; transform: none; }
+.reveal .mh-let .pos {
+  position: absolute; top: -0.55em; left: -0.4em; font-size: 0.5em; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 0.35em;
+}
+.reveal .mh-let .ch  { display: block; font-size: 1em; color: var(--text); }
+.reveal .mh-let .val { display: block; font-size: 0.72em; }
+.reveal .mh-let.odd  { border-color: var(--mh-odd); }
+.reveal .mh-let.odd .val  { color: var(--mh-odd); }
+.reveal .mh-let.even { border-color: var(--mh-even); }
+.reveal .mh-let.even .val { color: var(--mh-even); }
+
+/* 2 · position-sum buckets — the addition builds up term by term */
+.reveal .mh-buckets { display: flex; gap: 0.7em; flex-wrap: wrap; }
+.reveal .mh-bucket {
+  font-family: var(--font-mono); font-size: 0.8em; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px; padding: 0.5em 0.75em;
+  display: flex; flex-direction: column; gap: 0.3em; align-items: flex-start;
+}
+.reveal .mh-bucket .lbl { color: var(--muted); font-size: 0.85em; }
+.reveal .mh-calc { display: flex; flex-wrap: wrap; gap: 0.3em; align-items: baseline; }
+/* each term / operator / sum "clones down" into place, staggered */
+.reveal .mh-calc .term,
+.reveal .mh-calc .op,
+.reveal .mh-calc .sum {
+  opacity: 0; transform: translateY(-10px); transition: opacity .25s ease, transform .25s ease;
+}
+.reveal .mh-calc .term.show,
+.reveal .mh-calc .op.show,
+.reveal .mh-calc .sum.show { opacity: 1; transform: none; }
+.reveal .mh-calc .op { color: var(--muted); }
+.reveal .mh-calc .sum { font-size: 1.2em; font-weight: 700; padding-left: 0.15em; }
+.reveal .mh-bucket.odd  { border-color: var(--mh-odd); }
+.reveal .mh-bucket.odd .term, .reveal .mh-bucket.odd .sum  { color: var(--mh-odd); }
+.reveal .mh-bucket.even { border-color: var(--mh-even); }
+.reveal .mh-bucket.even .term, .reveal .mh-bucket.even .sum { color: var(--mh-even); }
+
+/* 3 · multiply */
+.reveal .mh-mult { font-family: var(--font-mono); font-size: 1.05em; color: var(--muted); }
+.reveal .mh-mult [data-oddm]  { color: var(--mh-odd); font-weight: 700; }
+.reveal .mh-mult [data-evenm] { color: var(--mh-even); font-weight: 700; }
+.reveal .mh-mult b { color: var(--text); }
+
+/* 4 · digits of the resultant number → odd ones become letters */
+.reveal .mh-digits { display: flex; gap: 0.32em; flex-wrap: wrap; }
+.reveal .mh-dig {
+  text-align: center; font-family: var(--font-mono); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.22em 0.45em; min-width: 1.8em; background: var(--surface);
+  opacity: 0; transform: translateY(6px); transition: opacity .25s ease, transform .25s ease;
+}
+.reveal .mh-dig.show { opacity: 1; transform: none; }
+.reveal .mh-dig .d  { display: block; font-size: 1em; color: var(--text); }
+.reveal .mh-dig .to { display: block; font-size: 0.72em; color: var(--muted); }
+/* odd digit → converted to a letter (green); even digit → kept as-is (plain) */
+.reveal .mh-dig.odd { border-color: var(--mh-out); }
+.reveal .mh-dig.odd .d, .reveal .mh-dig.odd .to { color: var(--mh-out); }
+.reveal .mh-dig.even .to { color: var(--text); }
+
+.reveal .dh-controls { display: flex; gap: 0.45em; margin: 0.4em 0 0.5em; }
+
+/* Fingerprint output */
+.reveal .dh-fp-label { color: var(--muted); font-family: var(--font-mono); font-size: 0.72em; margin-top: 0.3em; }
+.reveal .dh-fp {
+  font-family: var(--font-mono); color: var(--accent); font-size: 1.7em;
+  letter-spacing: 2px; word-break: break-all; margin-top: 0.1em;
+}
+.reveal .dh-fp.big64 { font-size: 0.95em; letter-spacing: 1px; line-height: 1.5; }
+
+/* Before/after avalanche comparison */
+.reveal .dh-compare { margin-top: 0.55em; display: none; }
+.reveal .dh-compare.show { display: block; }
+.reveal .dh-compare .crow { display: flex; gap: 0.6em; align-items: baseline; font-family: var(--font-mono); font-size: 0.85em; margin: 0.12em 0; }
+.reveal .dh-compare .k { color: var(--muted); width: 3.6em; flex: 0 0 auto; }
+.reveal .dh-compare .old { color: var(--muted); word-break: break-all; }
+.reveal .dh-compare .new { color: var(--accent); word-break: break-all; }
+
+/* =====================================================================
+   DEMO 2 — Tamper → domino (js/demo-chain.js), mounts into #demo-chain (12)
+   ===================================================================== */
+.reveal .bc { font-size: 0.62em; }
+.reveal .bc-row { display: flex; align-items: stretch; gap: 0; flex-wrap: wrap; }
+.reveal .bc-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.6em 0.7em; min-width: 11em; flex: 0 1 auto;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.reveal .bc-block.valid  { border-color: rgba(61, 220, 132, 0.55); }
+.reveal .bc-block.broken { border-color: var(--danger); box-shadow: 0 0 0 1px var(--danger); background: rgba(255, 92, 122, 0.06); }
+.reveal .bc-head { display: flex; justify-content: space-between; align-items: center; gap: 0.5em; margin-bottom: 0.35em; }
+.reveal .bc-idx { font-family: var(--font-mono); color: var(--accent); font-size: 0.82em; letter-spacing: 1px; }
+.reveal .bc-badge {
+  font-family: var(--font-mono); font-size: 0.62em; padding: 0.12em 0.5em;
+  border-radius: 999px; border: 1px solid; white-space: nowrap;
+}
+.reveal .bc-badge.valid  { color: var(--ok);     border-color: rgba(61, 220, 132, 0.55); }
+.reveal .bc-badge.broken { color: var(--danger); border-color: var(--danger); }
+.reveal .bc-data {
+  width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 0.85em;
+  background: var(--bg); color: var(--text); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.35em 0.5em; margin: 0.1em 0 0.4em;
+}
+.reveal .bc-data:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-soft); }
+.reveal .bc-static { font-family: var(--font-mono); font-size: 0.85em; color: var(--muted); padding: 0.35em 0 0.5em; }
+.reveal .bc-field { font-family: var(--font-mono); font-size: 0.68em; color: var(--muted); margin-top: 0.15em; white-space: nowrap; }
+.reveal .bc-prev, .reveal .bc-hash { color: var(--text); }
+.reveal .bc-prev.mismatch { color: var(--danger); }
+.reveal .bc-weld { align-self: center; color: var(--accent); font-size: 1.15em; padding: 0 0.35em; transition: color .2s; }
+.reveal .bc-weld.broken { color: var(--danger); }
+.reveal .bc-controls { display: flex; gap: 0.55em; align-items: center; margin-top: 0.8em; flex-wrap: wrap; }
+.reveal .bc-hint { color: var(--muted); font-family: var(--font-mono); font-size: 0.72em; }
+
+.reveal .dh-cap { color: var(--muted); font-size: 0.72em; margin-top: 0.5em; }
+.reveal .sha-explain { margin-top: 0.7em; }
+.reveal .sha-explain ul { font-size: 0.72em; margin: 0.3em 0 0 1.1em; color: var(--muted); }
+.reveal .sha-explain li { margin: 0.3em 0; }
+.reveal .sha-explain li b { color: var(--text); font-weight: 700; }
+.reveal .dh-warn { color: var(--danger); font-family: var(--font-mono); font-size: 0.8em; }
+.reveal .dh-stage { display: none; }
+.reveal .dh-stage.active { display: block; }
+
+/* =====================================================================
+   DEMO 3 — Digital signatures (js/demo-sign.js), mounts into #demo-sign
+   ===================================================================== */
+.reveal .ds { font-size: 0.62em; line-height: 1.4; }
+.reveal .ds-keys { display: flex; gap: 0.6em; flex-wrap: wrap; margin-bottom: 0.6em; }
+.reveal .ds-tag {
+  font-family: var(--font-mono); font-size: 0.82em; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 999px; padding: 0.22em 0.7em;
+}
+.reveal .ds-tag b { color: var(--text); font-weight: 700; }
+.reveal .ds-priv { border-color: var(--danger); }
+.reveal .ds-priv b { color: var(--danger); }
+.reveal .ds-pub { border-color: var(--accent); }
+.reveal .ds-pub b { color: var(--accent); }
+.reveal .ds-pubhex { color: var(--accent); margin-left: 0.35em; }
+
+.reveal .ds-sigline,
+.reveal .ds-verify { display: flex; align-items: baseline; gap: 0.6em; margin-top: 0.55em; flex-wrap: wrap; }
+.reveal .ds-sig { color: var(--accent); word-break: break-all; }
+.reveal .ds-badge {
+  font-family: var(--font-mono); font-size: 0.9em; font-weight: 700;
+  border: 1px solid var(--border); border-radius: 8px; padding: 0.2em 0.6em;
+  color: var(--muted); transition: color .2s, border-color .2s, background .2s;
+}
+.reveal .ds-badge.ok  { color: var(--ok); border-color: var(--ok); background: rgba(61,220,132,.08); }
+.reveal .ds-badge.bad { color: var(--danger); border-color: var(--danger); background: rgba(255,92,122,.08); }
+.reveal .ds .dh-top { margin-top: 0.2em; }
+
+/* Slide-level: side-by-side "integrity vs authenticity" mini-recap */
+.reveal .duo { display: flex; gap: 1em; margin-top: 0.3em; }
+.reveal .duo .col {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.5em 0.7em;
+}
+.reveal .duo .col h4 { color: var(--accent); margin: 0 0 0.25em; font-size: 0.78em; letter-spacing: .5px; }
+.reveal .duo .col p { font-size: 0.68em; color: var(--muted); margin: 0; }
+.reveal .duo .col p b { color: var(--text); font-weight: 700; }

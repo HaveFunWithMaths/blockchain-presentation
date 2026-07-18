@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decode the Tech — Blockchain</title>
+
+  <!-- reveal.js core (bundled locally — no CDN at talk time) -->
+  <link rel="stylesheet" href="vendor/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="vendor/revealjs/dist/reveal.css">
+  <!-- Decode the Tech theme (self-contained; owns all colors + type) -->
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ================================================================
+           ACT 1 — THE PROBLEM  (~8 min)
+           ================================================================ -->
+
+      <!-- 1 · Title (0.5m) -->
+      <section data-auto-animate>
+        <p class="eyebrow">Decode the Tech</p>
+        <h1>Blockchain</h1>
+        <div class="chain-rule" aria-hidden="true"><i></i><span></span><i></i><span></span><i></i></div>
+        <!-- TODO: replace with the actual presenter name -->
+        <p class="kicker">‹ Presenter name ›</p>
+        <aside class="notes">
+          Everyone's heard the word; almost no one can explain it. By the end
+          you'll see it's simpler than the hype. We'll build it up from first
+          principles, engineer-style — no finance jargon, just hashing,
+          append-only logs, and a way to agree. The whole talk is a *reveal*:
+          it sounds like finance hype; it's actually a small pile of elegant
+          engineering you already half-know.
+        </aside>
+      </section>
+
+      <!-- 2 · What people *think* blockchain is (1.5m) -->
+      <section>
+        <p class="act">Act 1 · <b>The Problem</b></p>
+        <h2 class="lead">What people <em>think</em> it is</h2>
+        <div class="chips">
+          <span class="chip fragment">…something about Bitcoin?</span>
+          <span class="chip fragment">…a way to make electronic contracts?</span>
+          <span class="chip fragment">…something about financial transactions?</span>
+        </div>
+        <aside class="notes">
+          Read them out; let the room recognize themselves — most engineers
+          hold some blend of these. The hook: each one is *partly* right and
+          *mostly* wrong. Bitcoin is one application, not the thing itself;
+          contracts are a later feature; "transactions" needn't be financial.
+          Promise to fix all three by the end. (We'll call back to this exact
+          slide on the final slide and correct each one.)
+        </aside>
+      </section>
+
+      <!-- 3 · Where it came from (2m) -->
+      <section>
+        <div class="split">
+          <div class="half">
+            <h2 class="lead">Where it came from</h2>
+            <p class="kicker">Satoshi Nakamoto, 2008</p>
+            <p>The invention wasn't digital money.<br>
+               It was <span class="accent">a shared record no one controls
+               and no one can secretly rewrite.</span></p>
+          </div>
+          <div class="half" style="flex:0 0 auto">
+            <!-- Text/CSS rendering of the paper's title page (offline-safe).
+                 Drop in a real scan at /vendor/img/ later if preferred. -->
+            <div class="paper" aria-label="Bitcoin white paper, 2008">
+              <div class="ptitle">Bitcoin: A Peer-to-Peer Electronic Cash System</div>
+              <div class="pauth">Satoshi Nakamoto · satoshin@gmx.com · www.bitcoin.org</div>
+              <div class="pabs"><b>Abstract.</b> A purely peer-to-peer version of
+                electronic cash would allow online payments to be sent directly
+                from one party to another without going through a financial
+                institution…</div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">
+          People tried digital money for decades and it kept failing — the hard
+          part was never the coins, it was agreeing on a record with no trusted
+          keeper. Satoshi's 2008 paper cracked that. Key framing:
+          **blockchain = the mechanism; Bitcoin = the first application.**
+          CERN parallel: the web was invented to share physics papers, then ate
+          the world — same story here, built for one problem, escaped into many.
+        </aside>
+      </section>
+
+      <!-- 4 · The real problem: ledgers & trust (2.5m) -->
+      <section>
+        <h2 class="lead">The real problem: ledgers &amp; trust</h2>
+        <div class="split">
+          <div class="half">
+            <table class="ledger">
+              <tr><th>Date</th><th>From</th><th>To</th><th>Amt</th></tr>
+              <tr><td>05-01</td><td>Alice</td><td>Bob</td><td>50</td></tr>
+              <tr><td>05-02</td><td>Bob</td><td>Carol</td><td>30</td></tr>
+              <tr><td>05-03</td><td>Carol</td><td>Dave</td><td>10</td></tr>
+            </table>
+            <p class="kicker">Append-only: you never edit a row, you only add one.</p>
+          </div>
+          <div class="half">
+            <p class="fragment"><span class="accent">Alice:</span> "I paid you."<br>
+               <span class="accent">Bob:</span> "No you didn't."</p>
+            <p class="fragment muted">Whose copy is the truth?</p>
+          </div>
+        </div>
+        <aside class="notes">
+          Define a ledger: an append-only list of entries — you never edit an
+          entry, you only add. Apples example: I record a sale, you record a
+          purchase; two books that should agree. Failure modes: ledgers get
+          **damaged**, drift **out of sync**, or get **altered on purpose.**
+          Land hard on Alice vs Bob — she says she paid, he says she didn't;
+          whose copy is truth? *That discrepancy is the entire problem the rest
+          of the talk solves.*
+        </aside>
+      </section>
+
+      <!-- 5 · Today's fix: the middleman (1.5m) -->
+      <section>
+        <h2 class="lead">Today's fix: the middleman</h2>
+        <div class="flow">
+          <div class="node"><span class="big">👩</span><span class="lbl">Alice</span></div>
+          <span class="arrow">→</span>
+          <div class="node mid"><span class="big">🏦</span><span class="lbl">Bank</span></div>
+          <span class="arrow">→</span>
+          <div class="node"><span class="big">🧔</span><span class="lbl">Bob</span></div>
+        </div>
+        <p class="fragment muted" style="margin-top:0.8em">
+          Fees · delay · single point of control · and you still trust <em>them</em>.</p>
+        <p class="fragment accent" style="margin-top:0.4em">
+          Can we get the trust <em>without</em> the trusted party?</p>
+        <aside class="notes">
+          We solve the dispute by outsourcing trust to a neutral third party —
+          a bank, a clearing house, a platform. It works! But: fees, delay, a
+          single point of control and failure, and you *still* have to trust
+          them to be honest and available. Close Act 1 with the provocation
+          that the whole rest of the talk answers: **can we get the trust
+          without the trusted party?**
+        </aside>
+      </section>
+
+      <!-- ================================================================
+           ACT 2 — THE ENGINEERING  (~19 min)
+           ================================================================ -->
+
+      <!-- 6 · A shared, distributed ledger (2m) -->
+      <section>
+        <p class="act">Act 2 · <b>The Engineering</b></p>
+        <h2 class="lead">A shared, distributed ledger</h2>
+        <div class="split">
+          <div class="half">
+            <div class="mesh" aria-hidden="true">
+              <span class="peer own">▤</span><span class="peer">▤</span><span class="peer">▤</span>
+              <span class="peer">▤</span><span class="peer own">▤</span><span class="peer">▤</span>
+              <span class="peer">▤</span><span class="peer">▤</span><span class="peer own">▤</span>
+            </div>
+          </div>
+          <div class="half">
+            <p>One ledger, mirrored on <span class="accent">every</span> computer. No owner.</p>
+            <ul>
+              <li class="fragment">How does everyone <em>agree</em> what's true?</li>
+              <li class="fragment">What stops someone editing their <em>own</em> copy?</li>
+            </ul>
+          </div>
+        </div>
+        <aside class="notes">
+          Imagine what Alice writes instantly appears on Bob's copy — and
+          nobody owns it; everyone holds a full copy. No middleman; the same
+          idea works for 2 people, 10,000, or the whole public. But going
+          owner-less raises the two questions the rest of Act 2 answers:
+          **(1) how does everyone agree what's true?** and
+          **(2) what stops someone quietly editing their own copy?**
+        </aside>
+      </section>
+
+      <!-- 7 · Blocks & the chain — Git analogy (2m) -->
+      <section>
+        <h2 class="lead">Blocks &amp; the chain</h2>
+        <p class="kicker">A block is a <em>batch</em> of transactions — each with an ID, parties, and amount.</p>
+        <div class="blocks">
+          <div class="blk detail">
+            <div class="bhead"><span class="idx">BLOCK 1</span><span class="cnt">2 txs</span></div>
+            <div class="tx"><span class="id">#7f3a</span><span class="who">Alice → Bob</span><span class="amt">50</span></div>
+            <div class="tx"><span class="id">#b2e1</span><span class="who">Frank → Alice</span><span class="amt">8</span></div>
+          </div>
+          <span class="weld">→</span>
+          <div class="blk detail">
+            <div class="bhead"><span class="idx">BLOCK 2</span><span class="cnt">2 txs</span></div>
+            <div class="tx"><span class="id">#c4d9</span><span class="who">Bob → Carol</span><span class="amt">30</span></div>
+            <div class="tx"><span class="id">#10ab</span><span class="who">Carol → Erin</span><span class="amt">5</span></div>
+          </div>
+          <span class="weld">→</span>
+          <div class="blk detail">
+            <div class="bhead"><span class="idx">BLOCK 3</span><span class="cnt">2 txs</span></div>
+            <div class="tx"><span class="id">#93f0</span><span class="who">Carol → Dave</span><span class="amt">10</span></div>
+            <div class="tx"><span class="id">#55cc</span><span class="who">Dave → Bob</span><span class="amt">3</span></div>
+          </div>
+        </div>
+        <p class="fragment"><span class="accent">You already use one every day: Git.</span>
+           A commit batches changes, is appended, is named by a hash — history hangs off it.</p>
+        <aside class="notes">
+          A block = a batch of transactions = think "a page." Blocks are
+          appended to the end, in order — you can't insert in the middle or
+          reorder → append-only. You get current state **plus** full history.
+          **Git analogy (keep it to one sentence):** "You already use one of
+          these every day — Git. A commit batches changes, gets appended, is
+          named by a hash, and the whole history hangs off it. A blockchain is
+          that idea, shared across strangers who don't trust each other." Don't
+          turn it into a Git lecture — one line, then move on.
+        </aside>
+      </section>
+
+      <!-- 8 · The obvious attack (1.5m) -->
+      <section>
+        <h2 class="lead">The obvious attack</h2>
+        <div class="blocks">
+          <div class="blk"><div class="idx">BLOCK 1</div><div class="row"><b>Alice → Bob : 50</b></div></div>
+          <span class="weld">→</span>
+          <div class="blk" style="border-color:var(--danger)">
+            <div class="idx" style="color:var(--danger)">BLOCK 2 ✎</div>
+            <div class="row"><b style="color:var(--danger)">Bob → <em>Villain</em> : 30</b></div></div>
+          <span class="weld">→</span>
+          <div class="blk"><div class="idx">BLOCK 3</div><div class="row"><b>Carol → Dave : 10</b></div></div>
+        </div>
+        <p class="fragment muted">Every copy lives on someone's machine. What stops a rewrite?</p>
+        <p class="fragment accent">Naively — nothing. Cue the reveal.</p>
+        <aside class="notes">
+          Here's the elephant in the room. Every copy of the ledger lives on
+          somebody's machine. What stops a bad actor from quietly rewriting an
+          old entry to pay themselves? Naively — **nothing.** This is *the*
+          problem all the remaining engineering exists to kill. Cue the reveal:
+          hashing, chaining, and consensus. Sit in the discomfort for a beat
+          before the next slide.
+        </aside>
+      </section>
+
+      <!-- 9 · Hashing, explained (1.5m) -->
+      <section>
+        <h2 class="lead">Hashing, explained</h2>
+        <p>Any data <span class="accent">→</span> a fixed-size fingerprint.</p>
+        <div class="props">
+          <div class="prop fragment"><b>Deterministic</b><small>same input → same output</small></div>
+          <div class="prop fragment"><b>Avalanche</b><small>1 char changes → totally different</small></div>
+          <div class="prop fragment"><b>One-way</b><small>can't reverse it</small></div>
+        </div>
+        <p class="fragment muted" style="margin-top:0.6em">
+          Hashing <em>≠</em> encryption — encryption is reversible, hashing is not.</p>
+        <aside class="notes">
+          A hash maps any input to a fixed-size fingerprint. Three properties:
+          same input → same output (deterministic); change one character → a
+          completely different output (avalanche); and you can't run it
+          backwards (one-way). Engineers know these — SHA-256, Git SHAs. Say
+          the common confusion out loud and kill it: **hashing is not
+          encryption.** Encryption is reversible by design (you decrypt);
+          hashing is a one-way fingerprint — there is no "un-hash."
+        </aside>
+      </section>
+
+      <!-- 10 · INTERACTIVE — Hashing demo (two stages) (4m) -->
+      <section>
+        <h2 class="lead">🔴 Live: hashing</h2>
+        <p class="kicker">Stage A — MiniHash (see every step) → Stage B — SHA-256 (the real one)</p>
+        <!-- Demo 1 mounts here in §8 step 3 (js/demo-hash.js). -->
+        <div class="demo-mount" id="demo-hash">
+          <span class="tag"><b>Demo 1</b> mounts here — MiniHash → SHA-256, live-editable</span>
+        </div>
+        <aside class="notes">
+          Stage A — the toy MiniHash: change one letter and watch the running
+          value diverge; make the point that the fingerprint is *entirely
+          determined by the data* and hypersensitive to it. Then reveal Stage B:
+          "here's the industrial-strength version — same idea, same avalanche,
+          just uncrackable." The toy demystifies *how*; SHA-256 makes it real.
+          Don't rush this — it's one of the two demos the whole talk rests on.
+          (Editing one character must visibly change the whole fingerprint.)
+        </aside>
+      </section>
+
+      <!-- 11 · Why hash — and chaining hashes (2m) -->
+      <section>
+        <h2 class="lead">Why hash — chaining them</h2>
+        <div class="blocks">
+          <div class="blk">
+            <div class="idx">BLOCK N-1</div>
+            <div class="row">data: …</div>
+            <div class="row">hash: <b class="accent">a3f9…</b></div>
+          </div>
+          <span class="weld">⛓</span>
+          <div class="blk" style="border-color:var(--accent)">
+            <div class="idx">BLOCK N</div>
+            <div class="row">prevHash: <b class="accent">a3f9…</b></div>
+            <div class="row">hash: 7c1e…</div>
+          </div>
+        </div>
+        <p class="fragment">Each block embeds the <span class="accent">previous block's hash</span>
+           → blocks are cryptographically welded in order.</p>
+        <aside class="notes">
+          A hash is a fingerprint/signature of the data: store it now, re-hash
+          later, compare — any mismatch means tampering. The trick that turns a
+          pile of blocks into a *chain*: each block embeds the previous block's
+          hash as its `prevHash`, so they're cryptographically welded in order.
+          Change any earlier block and its hash changes, so the next block's
+          stored `prevHash` no longer matches. (Optional one-liner: the
+          transactions *inside* a block are also hashed together into a Merkle
+          tree — but we won't go deeper today.)
+        </aside>
+      </section>
+
+      <!-- 12 · INTERACTIVE — Digital signatures: who sent it (§7·1) (2m) -->
+      <section>
+        <h2 class="lead">🔴 Live: digital signatures</h2>
+        <p class="kicker">Tamper-evidence proves the data wasn't <em>changed</em>.
+           Signatures prove <em>who</em> authorized it.</p>
+        <!-- Demo 3 mounts here (js/demo-sign.js) — real ECDSA sign / verify. -->
+        <div class="demo-mount" id="demo-sign">
+          <span class="tag"><b>Signatures demo</b> mounts here — sign as Alice, verify with her public key</span>
+        </div>
+        <div class="duo fragment">
+          <div class="col"><h4>🔒 Private key</h4><p><b>Signs.</b> Never shared. Only Alice holds it.</p></div>
+          <div class="col"><h4>🔑 Public key</h4><p><b>Verifies.</b> Shared with everyone. Proves it was Alice.</p></div>
+        </div>
+        <aside class="notes">
+          The gap this fills: the tamper→domino proved the ledger can't be
+          secretly *altered* (integrity) — but not that Alice actually
+          *authorized* her transaction (authenticity). Naively, anyone could
+          type "Alice → Bob : 50" into a block. Public-key cryptography closes
+          it. Alice has a **key pair**: a **private key** she keeps secret and a
+          **public key** she shares freely. To send, she **signs** the
+          transaction with her private key — the signature is a number derived
+          from both the message *and* her secret. Anyone with her public key can
+          **verify** that signature matches the message: proof it came from her
+          and wasn't changed. Live: hit **Sign as Alice**, then edit one
+          character (or "Forge a char") — the same signature stops verifying
+          (✗ forged). The punch: an attacker can copy her *public* key but still
+          can't forge a signature without the *private* key. **Verifying is
+          public; signing is private.** This is how every real transaction is
+          authorized — the sender signs, every node verifies before accepting.
+          (Still true: hashing ≠ encryption — signing uses the key pair, it
+          doesn't reversibly encrypt the message.) Keep it to ~2 min; the live
+          forge attempt is the whole point.
+        </aside>
+      </section>
+
+      <!-- 13 · INTERACTIVE — Tamper -> domino (3m) -->
+      <section>
+        <h2 class="lead">🔴 Live: tamper → domino</h2>
+        <p class="kicker">Edit a past transaction; watch every downstream block break.</p>
+        <!-- Demo 2 mounts here in §8 step 4 (js/demo-chain.js). -->
+        <div class="demo-mount" id="demo-chain">
+          <span class="tag"><b>Demo 2</b> mounts here — ~4 linked blocks, edit → cascade, fix / reset</span>
+        </div>
+        <aside class="notes">
+          This is the emotional peak — give it room. Edit the data in block 2:
+          its hash changes → block 3's stored `prevHash` no longer matches →
+          the break cascades red down the chain. Say it plainly: **tampering
+          isn't prevented — it's made instantly visible** (tamper-evident, not
+          tamper-proof). Then the hook into consensus: "to hide this you'd have
+          to recompute *every* block after it, on *every* copy, faster than
+          everyone else — which is exactly what consensus makes absurdly hard."
+          Use "Fix chain" to show how much work hiding it would take.
+        </aside>
+      </section>
+
+      <!-- 14 · Consensus & Proof-of-Work (3m) -->
+      <section>
+        <h2 class="lead">Consensus &amp; Proof-of-Work</h2>
+        <div class="split">
+          <div class="half">
+            <div class="mesh" aria-hidden="true">
+              <span class="peer own">▤</span><span class="peer own">▤</span><span class="peer">▤</span>
+              <span class="peer own">▤</span><span class="peer">▤</span><span class="peer own">▤</span>
+            </div>
+            <p class="kicker">Longest valid chain wins → honest majority converges.</p>
+          </div>
+          <div class="half">
+            <p>To add a block, find a <span class="accent">nonce</span> so the hash starts with N zeros:</p>
+            <div class="pow"><span class="zeros">0000</span><span class="rest">a91f…c3</span> &nbsp;← hard to find, trivial to verify</div>
+            <p class="fragment muted" style="font-size:0.7em; margin-top:0.5em">
+              51% attack: you'd need most of the world's compute to rewrite history.</p>
+          </div>
+        </div>
+        <aside class="notes">
+          This slide gets real depth.
+          • **The problem:** with thousands of copies — and sometimes two valid
+            blocks appearing at once — which chain is *the* truth? Consensus =
+            the network's rules for agreeing on one canonical chain.
+          • **Proof-of-Work:** to add a block you must find a **nonce** that
+            makes the block's hash start with N leading zeros. Hard to find
+            (brute force), trivial to verify. Writing history is made expensive.
+          • **Why tampering dies here (callback to the domino):** rewriting
+            block 2 means redoing the Proof-of-Work for block 2 *and every block
+            after it*, then out-racing the entire honest network that keeps
+            extending the real chain. Economically irrational.
+          • **Longest/heaviest valid chain wins** → the honest majority converges.
+          • **51% attack:** you'd need a majority of the world's compute to
+            rewrite history — the security model is "cheating costs more than
+            it's worth."
+          • **Hand off to the next slide:** there's a second way to make writing
+            expensive that doesn't burn electricity — Proof-of-Stake — which is
+            its own slide next. Don't dive into it here.
+        </aside>
+      </section>
+
+      <!-- 15 · PoW vs PoS + the energy debate (§7·4) (1.5m) -->
+      <section>
+        <h2 class="lead">Proof-of-Work vs Proof-of-Stake</h2>
+        <p class="kicker">Two ways to make writing history expensive — so honesty is the cheapest strategy.</p>
+        <div class="compare">
+          <div class="col">
+            <h4>Proof-of-Work</h4>
+            <ul>
+              <li>Burn <b>compute / electricity</b> to earn the right to add a block</li>
+              <li>Security = <em>energy already spent</em></li>
+              <li class="fragment">Cost: enormous power draw — a small country's worth</li>
+              <li>Bitcoin</li>
+            </ul>
+          </div>
+          <div class="col plain">
+            <h4>Proof-of-Stake</h4>
+            <ul>
+              <li>Post <b>collateral (stake)</b>; cheat → it's slashed (burned)</li>
+              <li>Security = <em>money at risk</em></li>
+              <li class="fragment">~99.9% less energy — no mining race</li>
+              <li>Ethereum (switched in 2022)</li>
+            </ul>
+          </div>
+        </div>
+        <p class="fragment accent" style="margin-top:0.5em">
+          Same goal — attacking must cost more than it earns. PoW pays in energy; PoS pays in stake.</p>
+        <aside class="notes">
+          Expand the one-liner I deferred on the last slide. Both schemes answer
+          the same question — "how do we make *writing* history expensive so the
+          honest chain always wins?" — with different currencies.
+          • **Proof-of-Work:** to add a block you burn real compute (and thus
+            electricity) searching for the nonce. Your stake in honesty is the
+            energy you've already spent; rewriting history means re-spending it
+            faster than everyone else. This is where the **energy debate** lives:
+            Bitcoin's network draws on the order of a mid-size country's
+            electricity, which is the single most common criticism — sometimes
+            countered with "much of it uses stranded/renewable power," but it's
+            genuinely large.
+          • **Proof-of-Stake:** instead of burning energy, validators lock up
+            **collateral** — a stake. Misbehave and the protocol **slashes**
+            (destroys) it. Security comes from money-at-risk, not power-spent, so
+            it uses ~99.9% less energy. Ethereum switched from PoW to PoS in 2022
+            (**"The Merge"**), cutting its energy use dramatically.
+          • **The trade-off framing to leave them with:** PoW ties security to a
+            physical, external cost (electricity); PoS ties it to an internal,
+            economic one (staked capital). Critics of PoS worry it can favor
+            those who already hold the most coins ("rich get richer");
+            defenders note the collateral makes attacks self-punishing. Don't
+            adjudicate — just show both are the same idea in different currency.
+          Keep to ~1.5 min — it's a frequent Q&A magnet, so having it as a slide
+          earns its place.
+        </aside>
+      </section>
+
+      <!-- ================================================================
+           ACT 3 — WHY IT MATTERS  (~9 min)
+           ================================================================ -->
+
+      <!-- 16 · Trust, reframed (1.5m) -->
+      <section>
+        <p class="act">Act 3 · <b>Why It Matters</b></p>
+        <p class="statement">Trust the <span class="accent">data</span>,<br>not the people.</p>
+        <aside class="notes">
+          This is the real invention, stated in one line. You no longer trust
+          Alice, Bob, or the bank — you trust the shared record and the math
+          that makes it tamper-evident. Trust moves from individuals and
+          institutions *to the system itself*, even with no central authority.
+          That's the whole magic trick, decoded — everything in Act 2 existed to
+          earn this sentence.
+        </aside>
+      </section>
+
+      <!-- 17 · Beyond money (1.5m) -->
+      <section>
+        <h2 class="lead">Beyond money</h2>
+        <p>A ledger needn't hold money — anything you want an
+           <span class="accent">agreed, tamper-evident history</span> of:</p>
+        <div class="chips">
+          <span class="chip">Supply chains</span>
+          <span class="chip">Property titles</span>
+          <span class="chip">Medical records</span>
+          <span class="chip">Credentials</span>
+        </div>
+        <aside class="notes">
+          The ledger doesn't care what the entries mean. Anything you want an
+          agreed, tamper-evident history of fits. Use the hospital-records
+          example: a patient's history that multiple providers can read and
+          append to, where no single party can silently rewrite the past.
+          (If running long, this slide merges with slide 16.)
+        </aside>
+      </section>
+
+      <!-- 18 · Permissioned blockchains (1.5m) -->
+      <section>
+        <h2 class="lead">Public vs permissioned</h2>
+        <div class="compare">
+          <div class="col">
+            <h4>Public</h4>
+            <ul><li>Anyone can join</li><li>Anonymous, open read/write</li><li>Bitcoin, Ethereum</li></ul>
+          </div>
+          <div class="col plain">
+            <h4>Permissioned</h4>
+            <ul><li>Known, authenticated members</li><li>Unique IDs, role-based access</li><li>Business networks</li></ul>
+          </div>
+        </div>
+        <aside class="notes">
+          Blockchains are open by default — but businesses often want control.
+          Permissioned chains have authenticated participants with unique IDs
+          and differentiated (role-based) access — same tamper-evident ledger,
+          but you know exactly who everyone is. Example: a hospital network
+          sharing records across providers securely and consistently, where
+          membership is controlled but no single provider owns the record.
+        </aside>
+      </section>
+
+      <!-- 19 · Smart contracts (2m) -->
+      <section>
+        <h2 class="lead">Smart contracts</h2>
+        <p>Store not just data — a small <span class="accent">program</span> that
+           self-executes when conditions are met.</p>
+        <pre><code>when (payment received)
+    transfer(ownership) → buyer   // no intermediary, runs the same every time</code></pre>
+        <aside class="notes">
+          Instead of storing just data, store a small program — an agreement
+          written in code — that runs automatically when its conditions are met.
+          Classic example: "payment received → ownership transfers," with no
+          intermediary to enforce it. It's deterministic: it always runs the
+          same way for everyone. Ethereum is the usual home for these. Give one
+          crisp example and stop — the *why it costs money* beat is its own
+          slide next.
+        </aside>
+      </section>
+
+      <!-- 20 · Gas / fees (§7·8) (1m) -->
+      <section>
+        <h2 class="lead">Gas: why transactions cost money</h2>
+        <p>Running that code isn't free — every operation has a price, paid as a
+           <span class="accent">fee</span> ("gas") to whoever adds your block.</p>
+        <div class="props">
+          <div class="prop fragment"><b>Pays for work</b><small>compensates validators + funds security</small></div>
+          <div class="prop fragment"><b>Stops spam</b><small>an infinite loop would cost infinite money → it halts</small></div>
+          <div class="prop fragment"><b>Prices priority</b><small>bid more → mined sooner; busy network → higher fees</small></div>
+        </div>
+        <p class="fragment muted" style="margin-top:0.5em">
+          More computation = more gas. A simple transfer is cheap; a complex contract costs more.</p>
+        <aside class="notes">
+          Ties straight to the previous slide. If a smart contract is a program
+          the whole network runs, someone has to pay for that computation — and
+          it has to be metered, or a single bad contract could run forever and
+          freeze the chain. That's **gas**: every operation has a small price,
+          and you attach a **fee** to your transaction to cover it, paid to
+          whoever adds your block.
+          • **Pays for the work + security:** the fee compensates the miner /
+            validator and, with the block reward, is what funds the honest
+            majority we built in Act 2.
+          • **Spam / halting protection:** because every step costs money, an
+            infinite loop simply runs out of gas and stops — you can't DoS the
+            network for free. This is the real reason gas exists, not just
+            revenue.
+          • **A live fee market:** gas is priced by supply and demand — bid more
+            to get mined sooner; when the network is busy, fees spike (the famous
+            "Ethereum gas fees"). More computation = more gas, so a plain
+            transfer is cheap and a complex contract is dear.
+          Keep it to ~1 min — the takeaway is just "computation is metered and
+          paid for; that's what fees are." Ethereum is where the term lives.
+        </aside>
+      </section>
+
+      <!-- 21 · When you *don't* need a blockchain (1.5m) — credibility slide -->
+      <section>
+        <p class="statement">Have a trusted central party?<br>
+           <span class="accent">Use a database.</span></p>
+        <p class="fragment muted" style="margin-top:0.6em">
+          Simpler · faster · cheaper. Blockchain earns its overhead only when
+          participants don't trust each other <em>and</em> there's no central controller.</p>
+        <aside class="notes">
+          The credibility slide — say this out loud and the rest of the talk
+          becomes believable. If you already have a trusted central party, a
+          normal database is simpler, faster, and cheaper — full stop. Blockchain
+          earns its considerable overhead **only** when participants *don't*
+          trust each other *and* you want *no* central controller. Decoding the
+          hype — telling people when *not* to use it — is literally the point of
+          this series.
+        </aside>
+      </section>
+
+      <!-- 22 · The future + close (1.5m) -->
+      <section>
+        <h2 class="lead">Like TCP/IP</h2>
+        <p class="statement">Winning infrastructure <span class="accent">disappears.</span></p>
+        <p class="fragment muted" style="margin-top:0.6em">
+          Back to slide 2 — <em>Bitcoin?</em> one app · <em>contracts?</em> one feature ·
+          <em>financial?</em> just one kind of entry.</p>
+        <aside class="notes">
+          Winning infrastructure disappears — we stopped talking about TCP/IP;
+          it just runs underneath everything. A shared, tamper-evident ledger
+          with trust built in is a genuinely useful primitive, and that's what
+          hides under the buzzword. **Callback to slide 2's three
+          misconceptions** and briefly correct each: Bitcoin is one application;
+          smart contracts are one feature; "transactions" are just one kind of
+          entry. Close the loop — that's the decode.
+        </aside>
+      </section>
+
+      <!-- → Q&A (~4 min) -->
+      <section>
+        <p class="eyebrow">Decode the Tech</p>
+        <h2>Questions?</h2>
+        <p class="muted">Hashing · append-only logs · consensus. That's the whole trick.</p>
+        <aside class="notes">
+          Q&A (~4 min). Signatures, PoW-vs-PoS/energy, and gas/fees are now
+          covered in the deck (slides 12, 15, 20) — if they come up, point back
+          to those. Remaining likely questions to have ready: the double-spend
+          problem by name; real-world failures (Mt. Gox, The DAO — the chain was
+          fine, the humans/code around it weren't); Merkle trees; forks. The
+          rest of the §7 optional menu covers these if you want to pre-build any.
+        </aside>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- reveal.js engine + notes plugin (both bundled locally) -->
+  <script src="vendor/revealjs/dist/reveal.js"></script>
+  <script src="vendor/revealjs/plugin/notes/notes.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,          // deep-linkable slide URLs
+      controls: true,      // clickable nav arrows
+      progress: true,      // slide progress bar
+      slideNumber: 'c/t',  // "current / total" in the corner
+      overview: true,      // Esc = overview grid
+      center: true,        // vertical-center slide content
+      transition: 'slide',
+      // 16:9 canvas sized for a 1920x1080 projector; reveal scales to fit.
+      width: 1920,
+      height: 1080,
+      margin: 0.06,
+      plugins: [ RevealNotes ]   // S = speaker view with the <aside> notes
+    });
+  </script>
+
+  <!-- Interactive demos (vanilla JS, mount into their slide's container) -->
+  <script src="js/demo-hash.js"></script>    <!-- Demo 1 → #demo-hash  (slide 10) -->
+  <script src="js/demo-sign.js"></script>    <!-- Demo 3 → #demo-sign  (slide 12) -->
+  <script src="js/demo-chain.js"></script>   <!-- Demo 2 → #demo-chain (slide 13) -->
+</body>
+</html>
