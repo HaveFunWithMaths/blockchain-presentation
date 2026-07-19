@@ -1,5 +1,5 @@
 /* =====================================================================
-   DEMO 3 — Digital signatures (sign with private key, verify with public)
+   DEMO 3 — Digital signatures (sign with private key, verify with public)  ·  slide 13
    ---------------------------------------------------------------------
    Real public-key crypto via the Web Crypto API: ECDSA over P-256 with
    SHA-256. On mount we generate Alice's keypair. Her PUBLIC key is shared
@@ -85,7 +85,8 @@
 
   /* ---- state ------------------------------------------------------- */
   var keys = null, pubHex = '', signed = null;   // signed = { message, sigHex, sig }
-  var msgEl, sigEl, badgeEl, hintEl;
+  var verified = false;                          // has Bob run his check at least once?
+  var msgEl, sigEl, badgeEl, hintEl, verifyEl;
 
   function buildDOM() {
     mount.classList.add('mounted');
@@ -101,6 +102,8 @@
           '<input class="dh-input" data-msg spellcheck="false" autocomplete="off" ' +
             'value="Alice → Bob : 50">' +
           '<button class="dh-btn" data-sign>🔏 Sign as Alice</button>' +
+          '<button class="dh-btn" data-verify disabled ' +
+            'title="Check the signature using only Alice\'s public key">👤 Verify as Bob (using Alice\'s public key)</button>' +
           '<button class="dh-btn" data-forge title="Flip a character without Alice\'s key">😈 Forge a char</button>' +
         '</div>' +
         '<div class="ds-sigline">' +
@@ -108,25 +111,28 @@
           '<span class="dh-fp ds-sig" data-sig>— not signed yet —</span>' +
         '</div>' +
         '<div class="ds-verify">' +
-          '<span class="dh-fp-label">verify with public key</span>' +
+          '<span class="dh-fp-label">Bob verifies with Alice\'s public key</span>' +
           '<span class="ds-badge" data-badge>— sign first —</span>' +
         '</div>' +
         '<p class="dh-cap" data-hint>Private key signs · public key verifies. ' +
-          'Sign, then change one character — the signature stops verifying.</p>' +
+          'Sign as Alice, then click "Verify as Bob" — he never sees her private key, only the public one.</p>' +
       '</div>';
 
-    msgEl   = mount.querySelector('[data-msg]');
-    sigEl   = mount.querySelector('[data-sig]');
-    badgeEl = mount.querySelector('[data-badge]');
-    hintEl  = mount.querySelector('[data-hint]');
+    msgEl    = mount.querySelector('[data-msg]');
+    sigEl    = mount.querySelector('[data-sig]');
+    badgeEl  = mount.querySelector('[data-badge]');
+    hintEl   = mount.querySelector('[data-hint]');
+    verifyEl = mount.querySelector('[data-verify]');
 
     var deb;
     msgEl.addEventListener('input', function () {
       clearTimeout(deb);
-      deb = setTimeout(reverify, 120);          // live: editing breaks the signature
+      // live: editing the message re-runs Bob's check once he's verified at least once
+      deb = setTimeout(function () { if (verified) verifyAsBob(); }, 120);
     });
     mount.querySelector('[data-sign]').addEventListener('click', signMessage);
     mount.querySelector('[data-forge]').addEventListener('click', forgeChar);
+    verifyEl.addEventListener('click', verifyAsBob);
   }
 
   async function init() {
@@ -142,29 +148,33 @@
     var sig = await crypto.subtle.sign(SIGN, keys.privateKey, enc(message));
     var sigHex = bytesToHex(sig);
     signed = { message: message, sigHex: sigHex, sig: sig };
+    verified = false;
     scramble(sigEl, trunc(sigHex));
-    setBadge(true, '✓ genuine — signature matches this message');
-    hintEl.textContent = 'Signed. Now edit the message (or "Forge a char") — ' +
-      'the same signature will no longer verify.';
+    setBadge('neutral', '— click "Verify as Bob" —');
+    verifyEl.disabled = false;
+    hintEl.textContent = 'Signed by Alice with her private key. Now click ' +
+      '"Verify as Bob" — he only ever sees her public key.';
   }
 
-  async function reverify() {
+  async function verifyAsBob() {
     if (!signed) return;
+    verified = true;
     var ok = await crypto.subtle.verify(SIGN, keys.publicKey, signed.sig, enc(msgEl.value));
     if (ok) {
-      setBadge(true, '✓ genuine — signature matches this message');
-      hintEl.textContent = 'Message matches what Alice signed.';
+      setBadge(true, '✓ genuine — Bob confirms this really came from Alice');
+      hintEl.textContent = 'Bob checked the signature against Alice\'s public key: it matches. ' +
+        'Now edit the message (or "Forge a char") and watch his check fail.';
     } else {
-      setBadge(false, '✗ forged — signature does not match this message');
-      hintEl.textContent = 'The message changed, so Alice\'s signature no longer ' +
-        'verifies. Forging a valid one needs her private key — which no one else has.';
+      setBadge(false, '✗ forged — Bob\'s check against Alice\'s public key fails');
+      hintEl.textContent = 'The message changed, so Alice\'s signature no longer verifies ' +
+        'against her public key. Forging a valid one needs her private key — which only she has.';
     }
   }
 
   // "Forge" = change the message a hacker-style, WITHOUT re-signing → verify fails.
   function forgeChar() {
     var s = msgEl.value;
-    if (!s.length) { msgEl.value = 'Alice → Bob : 5000'; reverify(); return; }
+    if (!s.length) { msgEl.value = 'Alice → Bob : 5000'; verifyAsBob(); return; }
     // flip the last digit if there is one (the juicy "pay myself more" edit), else first letter
     var m = s.match(/\d(?=\D*$)/);
     if (m) {
@@ -175,11 +185,11 @@
       if (i < 0) i = 0;
       msgEl.value = s.slice(0, i) + nextChar(s[i]) + s.slice(i + 1);
     }
-    reverify();
+    verifyAsBob();
   }
 
-  function setBadge(ok, text) {
-    badgeEl.className = 'ds-badge ' + (ok ? 'ok' : 'bad');
+  function setBadge(state, text) {
+    badgeEl.className = 'ds-badge' + (state === 'neutral' ? '' : state ? ' ok' : ' bad');
     badgeEl.textContent = text;
   }
 

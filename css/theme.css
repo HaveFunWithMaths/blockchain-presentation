@@ -609,3 +609,54 @@ html { background: var(--bg); }
 .reveal .duo .col h4 { color: var(--accent); margin: 0 0 0.25em; font-size: 0.78em; letter-spacing: .5px; }
 .reveal .duo .col p { font-size: 0.68em; color: var(--muted); margin: 0; }
 .reveal .duo .col p b { color: var(--text); font-weight: 700; }
+
+/* Disabled state for the shared demo button (Merkle root reached, etc). */
+.reveal .dh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.reveal .dh-btn:disabled:hover { border-color: var(--border); color: var(--text); }
+
+/* On-screen numbered steps (slide 12 — Merkle tree explanation). */
+.reveal .mk-steps { font-size: 0.62em; color: var(--muted); margin: 0.5em 0 0 1.1em; }
+.reveal .mk-steps li { margin: 0.22em 0; }
+.reveal .mk-steps b { color: var(--text); font-weight: 700; }
+
+/* =====================================================================
+   DEMO 4 — Merkle tree (js/demo-merkle.js), mounts into #demo-merkle (slide 12)
+   ===================================================================== */
+.reveal .mk { font-size: 0.56em; }
+
+/* .mk-tree's width/height and every .mk-node's left/bottom/width/height are
+   set inline from js/demo-merkle.js as raw px in the deck's 1920×1080
+   authoring canvas — a parent node's x is computed as the exact midpoint of
+   the two children it combines, so lines and boxes always agree. Text
+   inside nodes uses px (not em) so it stays legible independent of the
+   0.56em cascade above, which only sizes the controls/hint text. */
+.reveal .mk-tree { position: relative; margin: 0.3em auto 0; }
+.reveal .mk-lines { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.reveal .mk-line { stroke: var(--accent-soft); stroke-width: 2px; }
+
+.reveal .mk-node {
+  position: absolute; box-sizing: border-box; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; transition: box-shadow 0.3s, border-color 0.3s;
+}
+.reveal .mk-node.mk-root { border-color: var(--accent); border-width: 2px; }
+.reveal .mk-node.mk-node-dup { border-style: dashed; opacity: 0.8; }
+.reveal .mk-node.mk-flash { box-shadow: 0 0 0 3px var(--accent-soft); border-color: var(--accent); }
+
+.reveal .mk-tx {
+  width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 13px;
+  text-align: center; background: var(--bg); color: var(--text); border: 1px solid var(--border);
+  border-radius: 5px; padding: 3px 4px; margin-bottom: 5px; outline: none;
+}
+.reveal .mk-tx:focus { border-color: var(--accent); }
+
+.reveal .mk-hash { font-family: var(--font-mono); color: var(--accent); font-size: 15px; letter-spacing: 0.4px; }
+.reveal .mk-hash-root { font-size: 19px; }
+.reveal .mk-label {
+  color: var(--muted); font-size: 10px; margin-bottom: 3px;
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.reveal .mk-dup-label { color: var(--danger); }
+
+.reveal .mk-controls { display: flex; align-items: center; gap: 0.6em; margin-top: 0.8em; flex-wrap: wrap; }

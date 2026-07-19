@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"require\\('vm'\\).runInNewContext\\(require\\('fs'\\).readFileSync\\('js/demo-sign.js','utf8'\\), {document:{getElementById:\\(\\)=>null}, window:{}}\\)\")"
+      "Bash(node -e \"require\\('vm'\\).runInNewContext\\(require\\('fs'\\).readFileSync\\('js/demo-sign.js','utf8'\\), {document:{getElementById:\\(\\)=>null}, window:{}}\\)\")",
+      "Bash(awk '/<section/{print NR\": \"$0} /<h[1-3]/{print NR\": \"$0}' index.html)"
     ]
   }
 }

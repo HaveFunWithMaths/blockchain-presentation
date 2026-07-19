@@ -308,14 +308,55 @@
         </aside>
       </section>
 
-      <!-- 12 · INTERACTIVE — Digital signatures: who sent it (§7·1) (2m) -->
+      <!-- 12 · INTERACTIVE — Merkle tree: combining many transactions into one hash (§7·3) (2m) -->
+      <section>
+        <h2 class="lead">🔴 Live: Merkle tree</h2>
+        <p class="kicker">A block doesn't hash <em>one</em> transaction — it hashes all of them into a single root.</p>
+        <!-- Demo 4 mounts here (js/demo-merkle.js) — 10 leaves, combine level by level. -->
+        <div class="demo-mount" id="demo-merkle">
+          <span class="tag"><b>Merkle tree demo</b> mounts here — 10 transactions, combine pairs up to one root hash</span>
+        </div>
+        <ol class="mk-steps">
+          <li class="fragment">Hash each transaction on its own — the <b>leaves</b>.</li>
+          <li class="fragment">Hash pairs of hashes together, going up a level.</li>
+          <li class="fragment">Odd one out? <b>Duplicate</b> the last hash and pair it with itself.</li>
+          <li class="fragment">Keep combining — one hash remains: the <span class="accent">Merkle root</span>.</li>
+        </ol>
+        <p class="fragment accent" style="margin-top:0.3em">Change <em>any</em> transaction and the root changes too — same avalanche, one level up.</p>
+        <aside class="notes">
+          This is the piece slide 11's one-liner deferred. A block can hold
+          thousands of transactions — hashing them as one giant concatenated
+          string would work, but it's wasteful and gives you no way to check a
+          single transaction without re-hashing everything. A Merkle tree fixes
+          both: hash each transaction (a **leaf**), then hash pairs of hashes
+          together going up, level by level, until one hash remains — the
+          **Merkle root**. Only that one root goes in the block header —
+          32-ish bytes standing in for however many thousands of transactions
+          are underneath. Live: click "Combine level" to walk all 10 leaves up
+          to the root, one level at a time (10 → 5 → 3 → 2 → 1). When a level
+          has an odd count, the last hash gets duplicated and paired with
+          itself — call that out explicitly, it happens twice here (5→3 and
+          3→2) and it's the one non-obvious rule in the whole scheme. Two
+          payoffs to land: (1) edit any one transaction (or hit "Tamper") and
+          the root changes — the exact same avalanche property from the
+          hashing slide, just applied to a whole batch at once. (2) You can
+          prove a single transaction is in the block by presenting just its
+          sibling hashes up the tree (a "Merkle proof") — log₂(n) hashes
+          instead of downloading the whole block. That's how lightweight
+          ("SPV") wallets confirm a payment without holding the entire chain.
+          Keep to ~2 min — the live combine is the point, the proof mention is
+          one sentence.
+        </aside>
+      </section>
+
+      <!-- 13 · INTERACTIVE — Digital signatures: who sent it (§7·1) (2m) -->
       <section>
         <h2 class="lead">🔴 Live: digital signatures</h2>
         <p class="kicker">Tamper-evidence proves the data wasn't <em>changed</em>.
            Signatures prove <em>who</em> authorized it.</p>
         <!-- Demo 3 mounts here (js/demo-sign.js) — real ECDSA sign / verify. -->
         <div class="demo-mount" id="demo-sign">
-          <span class="tag"><b>Signatures demo</b> mounts here — sign as Alice, verify with her public key</span>
+          <span class="tag"><b>Signatures demo</b> mounts here — sign as Alice, verify as Bob using her public key</span>
         </div>
         <div class="duo fragment">
           <div class="col"><h4>🔒 Private key</h4><p><b>Signs.</b> Never shared. Only Alice holds it.</p></div>
@@ -343,7 +384,7 @@
         </aside>
       </section>
 
-      <!-- 13 · INTERACTIVE — Tamper -> domino (3m) -->
+      <!-- 14 · INTERACTIVE — Tamper -> domino (3m) -->
       <section>
         <h2 class="lead">🔴 Live: tamper → domino</h2>
         <p class="kicker">Edit a past transaction; watch every downstream block break.</p>
@@ -363,7 +404,7 @@
         </aside>
       </section>
 
-      <!-- 14 · Consensus & Proof-of-Work (3m) -->
+      <!-- 15 · Consensus & Proof-of-Work (3m) -->
       <section>
         <h2 class="lead">Consensus &amp; Proof-of-Work</h2>
         <div class="split">
@@ -403,7 +444,7 @@
         </aside>
       </section>
 
-      <!-- 15 · PoW vs PoS + the energy debate (§7·4) (1.5m) -->
+      <!-- 16 · PoW vs PoS + the energy debate (§7·4) (1.5m) -->
       <section>
         <h2 class="lead">Proof-of-Work vs Proof-of-Stake</h2>
         <p class="kicker">Two ways to make writing history expensive — so honesty is the cheapest strategy.</p>
@@ -461,7 +502,7 @@
            ACT 3 — WHY IT MATTERS  (~9 min)
            ================================================================ -->
 
-      <!-- 16 · Trust, reframed (1.5m) -->
+      <!-- 17 · Trust, reframed (1.5m) -->
       <section>
         <p class="act">Act 3 · <b>Why It Matters</b></p>
         <p class="statement">Trust the <span class="accent">data</span>,<br>not the people.</p>
@@ -475,7 +516,7 @@
         </aside>
       </section>
 
-      <!-- 17 · Beyond money (1.5m) -->
+      <!-- 18 · Beyond money (1.5m) -->
       <section>
         <h2 class="lead">Beyond money</h2>
         <p>A ledger needn't hold money — anything you want an
@@ -495,7 +536,7 @@
         </aside>
       </section>
 
-      <!-- 18 · Permissioned blockchains (1.5m) -->
+      <!-- 19 · Permissioned blockchains (1.5m) -->
       <section>
         <h2 class="lead">Public vs permissioned</h2>
         <div class="compare">
@@ -518,7 +559,7 @@
         </aside>
       </section>
 
-      <!-- 19 · Smart contracts (2m) -->
+      <!-- 20 · Smart contracts (2m) -->
       <section>
         <h2 class="lead">Smart contracts</h2>
         <p>Store not just data — a small <span class="accent">program</span> that
@@ -536,7 +577,7 @@
         </aside>
       </section>
 
-      <!-- 20 · Gas / fees (§7·8) (1m) -->
+      <!-- 21 · Gas / fees (§7·8) (1m) -->
       <section>
         <h2 class="lead">Gas: why transactions cost money</h2>
         <p>Running that code isn't free — every operation has a price, paid as a
@@ -571,7 +612,7 @@
         </aside>
       </section>
 
-      <!-- 21 · When you *don't* need a blockchain (1.5m) — credibility slide -->
+      <!-- 22 · When you *don't* need a blockchain (1.5m) — credibility slide -->
       <section>
         <p class="statement">Have a trusted central party?<br>
            <span class="accent">Use a database.</span></p>
@@ -589,7 +630,7 @@
         </aside>
       </section>
 
-      <!-- 22 · The future + close (1.5m) -->
+      <!-- 23 · The future + close (1.5m) -->
       <section>
         <h2 class="lead">Like TCP/IP</h2>
         <p class="statement">Winning infrastructure <span class="accent">disappears.</span></p>
@@ -613,12 +654,13 @@
         <h2>Questions?</h2>
         <p class="muted">Hashing · append-only logs · consensus. That's the whole trick.</p>
         <aside class="notes">
-          Q&A (~4 min). Signatures, PoW-vs-PoS/energy, and gas/fees are now
-          covered in the deck (slides 12, 15, 20) — if they come up, point back
-          to those. Remaining likely questions to have ready: the double-spend
-          problem by name; real-world failures (Mt. Gox, The DAO — the chain was
-          fine, the humans/code around it weren't); Merkle trees; forks. The
-          rest of the §7 optional menu covers these if you want to pre-build any.
+          Q&A (~4 min). Merkle trees, signatures, PoW-vs-PoS/energy, and
+          gas/fees are now covered in the deck (slides 12, 13, 16, 21) — if they
+          come up, point back to those. Remaining likely questions to have
+          ready: the double-spend problem by name; real-world failures (Mt.
+          Gox, The DAO — the chain was fine, the humans/code around it
+          weren't); forks. The rest of the §7 optional menu covers these if you
+          want to pre-build any.
         </aside>
       </section>
 
@@ -646,8 +688,9 @@
   </script>
 
   <!-- Interactive demos (vanilla JS, mount into their slide's container) -->
-  <script src="js/demo-hash.js"></script>    <!-- Demo 1 → #demo-hash  (slide 10) -->
-  <script src="js/demo-sign.js"></script>    <!-- Demo 3 → #demo-sign  (slide 12) -->
-  <script src="js/demo-chain.js"></script>   <!-- Demo 2 → #demo-chain (slide 13) -->
+  <script src="js/demo-hash.js"></script>    <!-- Demo 1 → #demo-hash   (slide 10) -->
+  <script src="js/demo-merkle.js"></script>  <!-- Demo 4 → #demo-merkle (slide 12) -->
+  <script src="js/demo-sign.js"></script>    <!-- Demo 3 → #demo-sign   (slide 13) -->
+  <script src="js/demo-chain.js"></script>   <!-- Demo 2 → #demo-chain  (slide 14) -->
 </body>
 </html>

@@ -1,5 +1,5 @@
 /* =====================================================================
-   DEMO 2 — Tamper → domino (the money shot)  ·  slide 12
+   DEMO 2 — Tamper → domino (the money shot)  ·  slide 14
    ---------------------------------------------------------------------
    ~4 SHA-256-linked blocks. Each block stores { index, data, prevHash, hash }
    where hash = SHA-256(index | data | prevHash) and prevHash = the previous
